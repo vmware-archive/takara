@@ -8,7 +8,7 @@ it is highly portable, well supported and has a great track record. It is
 also natively available inside of the standard python library.
 
 If other password implementations are desired we plan to add vertical app
-merged systems to support argon2, bcrypt and scrypt.
+merged systems to support argon2, bcrypt, and scrypt.
 '''
 # Import python libs
 import hashlib
@@ -23,7 +23,7 @@ EXPOSE_SEAL_RAW = False
 ENCODE_RAW = True
 
 
-async def gen(hub, seal_raw=None):
+async def gen(hub, seal_raw=None, cipher=None):
     '''
     Generate a password, in this case, gather the password from the cli unless
     a password is provided
