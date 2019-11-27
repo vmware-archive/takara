@@ -3,20 +3,11 @@ More seals
 
 For now the local file store and fernet cipher are good to move things forward. But we do need to add the shamir seal
 
-Make Async
-==========
-
-Not everything needs to be async, most of this is CPU intensive, but the store system do need to be async
 
 How App-mergable is this?
 =========================
 
 Can this be merged into Idem and Heist without issue?
-
-Tests
-=====
-
-Need to set up tests
 
 Docs
 ====
