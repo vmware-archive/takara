@@ -23,13 +23,13 @@ EXPOSE_SEAL_RAW = False
 ENCODE_RAW = True
 
 
-async def gen(hub, passwd=None):
+async def gen(hub, seal_raw=None):
     '''
     Generate a password, in this case, gather the password from the cli unless
     a password is provided
     '''
-    if passwd is not None:
-        return passwd
+    if seal_raw is not None:
+        return seal_raw
     return getpass()
 
 

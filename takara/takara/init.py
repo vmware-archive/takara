@@ -1,3 +1,7 @@
+# Import local libs
+import takara.exc
+
+
 __func_alias__ = {'set_': 'set'}
 
 
@@ -38,7 +42,7 @@ async def create(hub, **kw):
     cipher = kw['cipher']
     seal = kw['seal']
     store = kw['store']
-    kw['seal_raw'] = await getattr(hub, f'takara.seal.{seal}.gen')()
+    kw['seal_raw'] = await getattr(hub, f'takara.seal.{seal}.gen')(seal_raw=kw.get('seal_raw', None))
     kw['seal_data'] = await getattr(hub, f'takara.seal.{seal}.create')(**kw)
     return await getattr(hub, f'takara.store.{store}.create')(**kw)
 
