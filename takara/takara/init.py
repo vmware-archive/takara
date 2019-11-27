@@ -1,17 +1,3 @@
-# CLI:
-# Load unit configs
-# Using Unit config data branch based on the subparser
-# Create:
-#   Gather needed data for creation, basicaly the seal data
-#   Call the store's create funtion passing in the needed data
-# Set:
-#   Unseal the desired Unit
-#   Using the cryptographic data from the unsealing encrypt the data
-#   Call the unit's store function to save the data
-# Get:
-#   Unseal the desired unit
-#   Using the cryptographic data from the unsealing encrypt the data
-#   Call the unit's store function to save the data
 __func_alias__ = {'set_': 'set'}
 
 
@@ -48,7 +34,7 @@ def create(hub, **kw):
     cipher = kw['cipher']
     seal = kw['seal']
     store = kw['store']
-    kw['seal_raw'] = getattr(hub, f'takara.seal.{seal}.gen')()  # TODO: Needs to be more dynamic
+    kw['seal_raw'] = getattr(hub, f'takara.seal.{seal}.gen')()
     kw['seal_data'] = getattr(hub, f'takara.seal.{seal}.create')(**kw)
     return getattr(hub, f'takara.store.{store}.create')(**kw)
 
@@ -62,7 +48,10 @@ def unseal(hub, **kw):
     seal = unit_config['seal']
     cipher = unit_config['cipher']
     seal_data = unit_config['seal_data']
-    seal_raw = getattr(hub, f'takara.seal.{seal}.gen')(kw.get('passwd', None))
+    if kw.get('seal_raw'):
+        seal_raw = kw['seal_raw']
+    else:
+        seal_raw = getattr(hub, f'takara.seal.{seal}.gen')(kw.get('passwd', None))
     if not getattr(hub, f'takara.seal.{seal}.verify')(seal_raw, seal_data):
         return False
     getattr(hub, f'takara.cipher.{cipher}.setup')(unit, seal_raw)

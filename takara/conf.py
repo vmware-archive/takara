@@ -22,6 +22,11 @@ CLI_CONFIG = {
             'sub': 'create',
             'help': 'The type of seal to use to secure the storage interface',
             },
+        'seal-raw': {
+            'default': None,
+            'sub': ['set', 'get'],
+            'help': 'DO NOT USE! This option allows you to pass secrets as command line arguments! This should only be used for testing!!',
+            },
         'path': {
             'options': ['-p'],
             'default': None,
