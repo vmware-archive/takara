@@ -51,8 +51,10 @@ def create(hub, **kw):
             'unit_root': unit_root,
             'seal_data': seal_data,
             'store': 'file'}
+    old_umask = os.umask(54)
     with open(unit_file, 'wb+') as wfh:
         wfh.write(msgpack.dumps(data, use_bin_type=True))
+    os.umask(old_umask)
     # refresh the unit config on the hub
     hub.takara.store.file.config(data_dir=data_dir)
 
@@ -70,8 +72,10 @@ def set_(hub, unit, path, value):
     fn_dir = os.path.dirname(fn_path)
     if not os.path.isdir(fn_dir):
         os.makedirs(fn_dir)
+    old_umask = os.umask(54)
     with open(fn_path, 'wb+') as wfh:
         wfh.write(value)
+    os.umask(old_umask)
 
 
 def get(hub, unit, path):
