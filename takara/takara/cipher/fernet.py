@@ -8,7 +8,7 @@ import base64
 import cryptography.fernet
 
 
-def setup(hub, unit, seal_raw):
+async def setup(hub, unit, seal_raw):
     '''
     Using the seal data derive a key
     '''
@@ -21,7 +21,7 @@ def setup(hub, unit, seal_raw):
     hub.takara.UNITS[unit]['cipher'] = cryptography.fernet.Fernet(key)
 
 
-def encrypt(hub, unit, data):
+async def encrypt(hub, unit, data):
     '''
     Using the key from the given unit encrypt the raw bytes found in data
     and return the encryption string
@@ -30,7 +30,7 @@ def encrypt(hub, unit, data):
     return cipher.encrypt(data)
 
 
-def decrypt(hub, unit, data):
+async def decrypt(hub, unit, data):
     '''
     Using the key from the given unit decrypt the raw bytes found in data
     and return the clear string

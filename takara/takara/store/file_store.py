@@ -13,7 +13,7 @@ __func_alias__ = {'set_': 'set'}
 UNIT_FN = 'config.mp'
 
 
-def config(hub, **kw):
+async def config(hub, **kw):
     '''
     Get the existing configuration for all available unit files
     '''
@@ -27,7 +27,7 @@ def config(hub, **kw):
     hub.takara.UNITS.update(ret)
 
 
-def create(hub, **kw):
+async def create(hub, **kw):
     '''
     Given a directory to create the store in, make the root directory used
     for the store adn place the unit confiruration inside.
@@ -56,10 +56,10 @@ def create(hub, **kw):
         wfh.write(msgpack.dumps(data, use_bin_type=True))
     os.umask(old_umask)
     # refresh the unit config on the hub
-    hub.takara.store.file.config(data_dir=data_dir)
+    await hub.takara.store.file.config(data_dir=data_dir)
 
 
-def set_(hub, unit, path, value):
+async def set_(hub, unit, path, value):
     '''
     Given the named unit, set the named value. The value should already be
     encrypted using the named unit's sealing mechanism
@@ -78,7 +78,7 @@ def set_(hub, unit, path, value):
     os.umask(old_umask)
 
 
-def get(hub, unit, path):
+async def get(hub, unit, path):
     '''
     Given the unit name and the path, get the encrypted data from the given path
     '''
@@ -91,4 +91,3 @@ def get(hub, unit, path):
         raise takara.exc.PathMissingError('The named path "{path}" is not present in unit "{unit}"')
     with open(fn_path, 'rb') as rfh:
         return rfh.read()
-

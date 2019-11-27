@@ -23,7 +23,7 @@ EXPOSE_SEAL_RAW = False
 ENCODE_RAW = True
 
 
-def gen(hub, passwd=None):
+async def gen(hub, passwd=None):
     '''
     Generate a password, in this case, gather the password from the cli unless
     a password is provided
@@ -33,7 +33,7 @@ def gen(hub, passwd=None):
     return getpass()
 
 
-def create(hub, **kw):
+async def create(hub, **kw):
     '''
     Given a password, create the salted hash to store for verification. This
     function is not unit specific but it intended to be called before the
@@ -52,7 +52,7 @@ def create(hub, **kw):
         ])
 
 
-def verify(hub, passwd, phash):
+async def verify(hub, passwd, phash):
     '''
     Verify the given phash and password combination
     '''
