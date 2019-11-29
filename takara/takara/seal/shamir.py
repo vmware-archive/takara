@@ -4,6 +4,7 @@ import os
 import codecs
 import base64
 import hashlib
+from getpass import getpass
 
 # Import third party libs
 import cryptography.fernet
@@ -11,6 +12,15 @@ import cryptography.fernet
 SECRET_LEN = 32
 POLY = 115792089237316195423570985008687907853269984665640564039457584007913129640997
 CHECK = b'Oh king eh? Very nice!'
+
+
+async def get(hub, seal_raw=None, cipher=None):
+    if seal_raw is not None:
+        return seal_raw
+    first = getpass('Please enter the first of three keys: ')
+    second = getpass('Please enter the second of three keys: ')
+    third = getpass('Please enter the third of three keys: ')
+    return '{first}:{second}:{third}'
 
 
 async def gen(hub, seal_raw=None, cipher=None):
@@ -21,7 +31,7 @@ async def gen(hub, seal_raw=None, cipher=None):
     ret = ''
     for comp in comps:
         ret += f'{comp[0]}|{comp[1].hex()}:'
-    return ret
+    return ret[:-1]
 
 
 async def create(hub, **kw):

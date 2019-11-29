@@ -59,7 +59,10 @@ async def unseal(hub, **kw):
     if kw.get('seal_raw'):
         seal_raw = kw['seal_raw']
     else:
-        seal_raw = await getattr(hub, f'takara.seal.{seal}.gen')(kw.get('passwd', None))
+        if getattr(hub, f'takara.seal.{seal}.get'):
+            seal_raw = await getattr(hub, f'takara.seal.{seal}.get')(kw.get('passwd', None))
+        else:
+            seal_raw = await getattr(hub, f'takara.seal.{seal}.gen')(kw.get('passwd', None))
     if not await getattr(hub, f'takara.seal.{seal}.verify')(seal_raw, seal_data):
         return False
     await getattr(hub, f'takara.cipher.{cipher}.setup')(unit, seal_raw)
