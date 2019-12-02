@@ -18,7 +18,7 @@ async def test_file_passwd_string(hub):
             'store': 'file',
             'cipher': 'fernet',
             'seal': 'passwd',
-            'path': 'foo.bar.baz',
+            'path': 'foo/bar/baz',
             'string': 'cheese!',
             }
     await hub.takara.init.create(**kw)
@@ -44,7 +44,7 @@ async def test_file_passwd_file(hub):
             'store': 'file',
             'cipher': 'fernet',
             'seal': 'passwd',
-            'path': 'foo.bar.baz',
+            'path': 'foo/bar/baz',
             'file': data_fn,
             }
     await hub.takara.init.create(**kw)
@@ -68,7 +68,7 @@ async def test_file_shamir_string(hub):
             'store': 'file',
             'cipher': 'fernet',
             'seal': 'shamir',
-            'path': 'foo.bar.baz',
+            'path': 'foo/bar/baz',
             'string': 'cheese!',
             }
     await hub.takara.init.create(**kw)
@@ -94,7 +94,7 @@ async def test_file_shamir_file(hub):
             'store': 'file',
             'cipher': 'fernet',
             'seal': 'shamir',
-            'path': 'foo.bar.baz',
+            'path': 'foo/bar/baz',
             'file': data_fn,
             }
     await hub.takara.init.create(**kw)

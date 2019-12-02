@@ -86,7 +86,7 @@ async def get(hub, unit, path):
         raise takara.exc.UnitMissingError('The named unit "{unit}" is not available')
     unit_config = hub.takara.UNITS[unit]
     unit_root = unit_config['unit_root']
-    fn_path = os.path.join(unit_root, path.replace('.', os.sep))
+    fn_path = os.path.join(unit_root, path.replace('/', os.sep))
     if not os.path.isfile(fn_path):
         raise takara.exc.PathMissingError('The named path "{path}" is not present in unit "{unit}"')
     with open(fn_path, 'rb') as rfh:
