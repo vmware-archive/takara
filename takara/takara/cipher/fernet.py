@@ -23,9 +23,10 @@ async def setup(hub, unit, seal_raw):
     '''
     seal_raw = seal_raw.encode()
     seal = hub.takara.UNITS[unit]['seal']
-    if getattr(hub, f'takara.seal.{seal}.ENCODE_RAW'):
-        key = base64.urlsafe_b64encode(hashlib.blake2s(seal_raw).digest())
-    if getattr(hub, f'takara.seal.{seal}.SEAL_DERIVE'):
+    if hasattr(hub, f'takara.seal.{seal}.ENCODE_RAW'):
+        if getattr(hub, f'takara.seal.{seal}.ENCODE_RAW'):
+            key = base64.urlsafe_b64encode(hashlib.blake2s(seal_raw).digest())
+    elif hasattr(hub, f'takara.seal.{seal}.SEAL_DERIVE'):
         key = getattr(hub, f'takara.seal.{seal}.derive')(seal_raw)
     else:
         key = seal_raw
