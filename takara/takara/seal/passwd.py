@@ -41,7 +41,7 @@ async def create(hub, **kw):
     '''
     algo = kw.get('passwd_hash_algo', 'sha512')
     iterations = kw.get('passwd_iterations', 100000)
-    passwd = kw['seal_raw'].encode()
+    passwd = kw['seal_raw'].encode('utf-8')
     salt = os.urandom(1024)
     raw = hashlib.pbkdf2_hmac(algo, passwd, salt, iterations)
     return b':'.join([

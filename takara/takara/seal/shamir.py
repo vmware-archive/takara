@@ -9,6 +9,15 @@ from getpass import getpass
 # Import third party libs
 import cryptography.fernet
 
+# Tell takara to present the seal_raw to the end user, as the seal can only
+# be generated
+EXPOSE_SEAL_RAW = True
+# Tell takara that the encryption key to use must be derived from input, in the
+# case of shamir's, this means that the input values need to be computed into the
+# actual key
+SEAL_DERIVE = True
+
+# Computation variables
 SECRET_LEN = 32
 POLY = 115792089237316195423570985008687907853269984665640564039457584007913129640997
 CHECK = b'Oh king eh? Very nice!'
@@ -35,7 +44,7 @@ async def gen(hub, seal_raw=None, cipher=None):
 
 
 async def create(hub, **kw):
-    comps = _to_comps(kw['seal_raw'])
+    comps = _to_comps(kw['seal_raw'].encode('utf-8'))
     secret = combine(3, comps)
     key = base64.urlsafe_b64encode(hashlib.blake2s(secret).digest())
     crypter = cryptography.fernet.Fernet(key)
@@ -46,7 +55,7 @@ async def verify(hub, passwd, phash):
     '''
     Verify that the key derived from the source is good
     '''
-    comps = _to_comps(passwd)
+    comps = _to_comps(passwd.encode('utf-8'))
     secret = combine(3, comps)
     key = base64.urlsafe_b64encode(hashlib.blake2s(secret).digest())
     crypter = cryptography.fernet.Fernet(key)
@@ -55,11 +64,21 @@ async def verify(hub, passwd, phash):
     return False
 
 
+def derive(hub, seal_raw):
+    '''
+    Derive the correct key from the seal_raw inputs
+    '''
+    comps = _to_comps(seal_raw)
+    secret = combine(3, comps)
+    key = base64.urlsafe_b64encode(hashlib.blake2s(secret).digest())
+    return key
+
+
 def _to_comps(seal_raw):
     ret = []
-    for comp in seal_raw.split(':'):
-        num, hex_digest = comp.split('|')
-        ret.append((num, bytes.fromhex(hex_digest)))
+    for comp in seal_raw.split(b':'):
+        num, hex_digest = comp.split(b'|')
+        ret.append((int(num), bytes.fromhex(hex_digest.decode())))
     return ret
 
 

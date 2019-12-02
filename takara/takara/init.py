@@ -16,15 +16,19 @@ def cli(hub):
     '''
     hub.pop.conf.integrate(['takara'], cli='takara', loader='yaml', roots=True)
     kw = hub.OPT['takara']
-    hub.pop.loop.start(hub.takara.init.start(**kw))
+    hub.pop.loop.start(hub.takara.init.start_cli(**kw))
 
 
-async def start(hub, **kw):
+async def start_cli(hub, **kw):
     await hub.takara.init.setup(**kw)
     coro = {'create': hub.takara.init.create,
      'set': hub.takara.init.set,
      'get': hub.takara.init.get}[hub.OPT['_subparser_']](**kw)
-    print(await coro)
+    ret = await coro
+    if ret and hub.OPT['_subparser_'] == 'create':
+        print('The following key(s) have been generated for your encrypted unit:')
+        for key in ret.split(':'):
+            print(key)
 
 
 async def setup(hub, **kw):
@@ -42,9 +46,15 @@ async def create(hub, **kw):
     cipher = kw['cipher']
     seal = kw['seal']
     store = kw['store']
-    kw['seal_raw'] = await getattr(hub, f'takara.seal.{seal}.gen')(seal_raw=kw.get('seal_raw', None))
+    kw['seal_raw'] = await getattr(hub, f'takara.seal.{seal}.gen')(
+        seal_raw=kw.get('seal_raw', None),
+        cipher=cipher)
     kw['seal_data'] = await getattr(hub, f'takara.seal.{seal}.create')(**kw)
-    return await getattr(hub, f'takara.store.{store}.create')(**kw)
+    ret = await getattr(hub, f'takara.store.{store}.create')(**kw)
+    if hasattr(hub, f'takara.seal.{seal}.EXPOSE_SEAL_RAW'):
+        if getattr(hub, f'takara.seal.{seal}.EXPOSE_SEAL_RAW'):
+            return kw['seal_raw']
+    return ret
 
 
 async def unseal(hub, **kw):
