@@ -12,10 +12,6 @@ import cryptography.fernet
 # Tell takara to present the seal_raw to the end user, as the seal can only
 # be generated
 EXPOSE_SEAL_RAW = True
-# Tell takara that the encryption key to use must be derived from input, in the
-# case of shamir's, this means that the input values need to be computed into the
-# actual key
-SEAL_DERIVE = True
 
 # Computation variables
 SECRET_LEN = 32
