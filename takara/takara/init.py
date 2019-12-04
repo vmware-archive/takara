@@ -29,6 +29,8 @@ async def start_cli(hub, **kw):
         print('The following key(s) have been generated for your encrypted unit:')
         for key in ret.split(':'):
             print(key)
+    if ret and hub.OPT['_subparser_'] == 'get':
+        print(ret)
 
 
 async def setup(hub, **kw):
@@ -63,13 +65,16 @@ async def unseal(hub, **kw):
     '''
     unit = kw['unit']
     unit_config = hub.takara.UNITS[unit]
+    if 'crypter' in unit_config:
+        # Already unsealed, carry on!
+        return True
     seal = unit_config['seal']
     cipher = unit_config['cipher']
     seal_data = unit_config['seal_data']
     if kw.get('seal_raw'):
         seal_raw = kw['seal_raw']
     else:
-        if getattr(hub, f'takara.seal.{seal}.get'):
+        if hasattr(hub, f'takara.seal.{seal}.get'):
             seal_raw = await getattr(hub, f'takara.seal.{seal}.get')(kw.get('passwd', None))
         else:
             seal_raw = await getattr(hub, f'takara.seal.{seal}.gen')(kw.get('passwd', None))
@@ -104,7 +109,7 @@ async def set_(hub, **kw):
 
 async def get(hub, **kw):
     '''
-    Set a specific value to a specific path
+    Get a specific value from a specific path
     '''
     if kw['unit'] not in hub.takara.UNITS:
         raise takara.exc.UnitMissingError()
