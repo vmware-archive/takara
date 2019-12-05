@@ -121,4 +121,5 @@ async def get(hub, **kw):
     if not unsealed:
         raise takara.exc.UnsealError('Falied to unseal the treasure, was entry correct?')
     enc = await getattr(hub, f'takara.store.{store}.get')(unit, kw['path'])
-    return await getattr(hub, f'takara.cipher.{cipher}.decrypt')(unit, enc)
+    ret = await getattr(hub, f'takara.cipher.{cipher}.decrypt')(unit, enc)
+    return ret.decode()

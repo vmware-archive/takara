@@ -8,7 +8,7 @@ CLI_CONFIG = {
         'store': {
             'default': 'file',
             'sub': ['create', 'get', 'set'],
-            'help': 'Chose the storage medium to use',
+            'help': 'Choose the storage medium to use',
             },
         'cipher': {
             'options': ['-C'],
@@ -22,7 +22,7 @@ CLI_CONFIG = {
             'sub': 'create',
             'help': 'The type of seal to use to secure the storage interface',
             },
-        'seal-raw': {
+        'seal_raw': {
             'default': None,
             'sub': ['set', 'get'],
             'help': 'DO NOT USE! This option allows you to pass secrets as command line arguments! This should only be used for testing!!',
@@ -56,7 +56,20 @@ CLI_CONFIG = {
             'help': 'The directory to store encrypted data when using the local file storage system'
             },
         }
-CONFIG = {}
+CONFIG = {
+        'data_dir': {
+            'default': '/var/takara/data',
+            'help': 'The directory to store data specific to the configuration of encrypted units when using local file storage systems',
+            },
+        'unit_dir': {
+            'default': '/var/takara/unit',
+            'help': 'The directory to store encrypted data when using the local file storage system'
+            },
+        'store': {
+            'default': 'file',
+            'help': 'Choose the storage medium to use',
+            },
+    }
 GLOBAL = {}
 SUBS = {
         'create': {
