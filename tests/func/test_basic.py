@@ -24,7 +24,7 @@ async def test_file_passwd_string(hub):
     await hub.takara.init.create(**kw)
     await hub.takara.init.set(**kw)
     ret = await hub.takara.init.get(**kw)
-    assert ret == b'cheese!'
+    assert ret == 'cheese!'
     shutil.rmtree(unit_dir)
     shutil.rmtree(data_dir)
 
@@ -50,7 +50,7 @@ async def test_file_passwd_file(hub):
     await hub.takara.init.create(**kw)
     await hub.takara.init.set(**kw)
     ret = await hub.takara.init.get(**kw)
-    assert ret == b'localfile data'
+    assert ret == 'localfile data'
     shutil.rmtree(unit_dir)
     shutil.rmtree(data_dir)
     os.remove(data_fn)
@@ -74,7 +74,7 @@ async def test_file_shamir_string(hub):
     await hub.takara.init.create(**kw)
     await hub.takara.init.set(**kw)
     ret = await hub.takara.init.get(**kw)
-    assert ret == b'cheese!'
+    assert ret == 'cheese!'
     shutil.rmtree(unit_dir)
     shutil.rmtree(data_dir)
 
@@ -100,7 +100,7 @@ async def test_file_shamir_file(hub):
     await hub.takara.init.create(**kw)
     await hub.takara.init.set(**kw)
     ret = await hub.takara.init.get(**kw)
-    assert ret == b'localfile data'
+    assert ret == 'localfile data'
     shutil.rmtree(unit_dir)
     shutil.rmtree(data_dir)
     os.remove(data_fn)
