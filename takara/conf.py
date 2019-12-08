@@ -2,24 +2,24 @@ CLI_CONFIG = {
         'unit': {
             'options': ['-u'],
             'default': 'main',
-            'sub': ['create', 'get', 'set'],
+            'sub': ['create', 'get', 'set', 'migrate'],
             'help': 'The unit to work with, if empty the unit "main" is used'
             },
         'store': {
             'default': 'file',
-            'sub': ['create', 'get', 'set'],
+            'sub': ['create', 'migrate'],
             'help': 'Choose the storage medium to use',
             },
         'cipher': {
             'options': ['-C'],
             'default': 'fernet',
-            'sub': 'create',
+            'sub': ['create', 'migrate'],
             'help': 'When creating or cipher to use for storage of data for the new unit',
             },
         'seal': {
             'options': ['-S'],
             'default': 'passwd',
-            'sub': 'create',
+            'sub': ['create', 'migrate'],
             'help': 'The type of seal to use to secure the storage interface',
             },
         'seal_raw': {
@@ -47,12 +47,12 @@ CLI_CONFIG = {
             },
         'data_dir': {
             'default': '/var/takara/data',
-            'sub': ['create', 'set', 'get'],
+            'sub': ['create', 'set', 'get', 'migrate'],
             'help': 'The directory to store data specific to the configuration of encrypted units when using local file storage systems',
             },
         'unit_dir': {
             'default': '/var/takara/unit',
-            'sub': ['create', 'set', 'get'],
+            'sub': ['create', 'set', 'get', 'migrate'],
             'help': 'The directory to store encrypted data when using the local file storage system'
             },
         }
@@ -83,6 +83,10 @@ SUBS = {
         'get': {
             'desc': 'Get data from a location',
             'help': 'Use Get to retrive data from a given location',
+            },
+        'migrate': {
+            'desc': 'Migrate a unit to other stores, seals, and/or ciphers',
+            'help': 'Migrate a unit to other stores, seals, and/or ciphers'
             },
         }
 DYNE = {

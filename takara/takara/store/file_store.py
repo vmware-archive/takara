@@ -3,22 +3,23 @@ Create a unit storage system based on a local file directory
 '''
 # Import python libs
 import os
+import shutil
 # Import third party libs
 import msgpack
 # Import local libs
 import takara.exc
 
 __virtualname__ = 'file'
-__func_alias__ = {'set_': 'set'}
+__func_alias__ = {'set_': 'set', 'list_': 'list'}
 UNIT_FN = 'config.mp'
 
 
-async def config(hub, **kw):
+async def config(hub, data_dir):
     '''
     Get the existing configuration for all available unit files
     '''
     ret = {}
-    data_dir = kw['data_dir']
+    data_dir = data_dir
     for unit_name in os.listdir(data_dir):
         unit_file = os.path.join(data_dir, unit_name, UNIT_FN)
         if os.path.isfile(unit_file):
@@ -50,7 +51,9 @@ async def create(hub, **kw):
             'seal': seal,
             'unit_root': unit_root,
             'seal_data': seal_data,
-            'store': 'file'}
+            'store': 'file',
+            'unit_file': unit_file,
+            }
     old_umask = os.umask(54)
     with open(unit_file, 'wb+') as wfh:
         wfh.write(msgpack.dumps(data, use_bin_type=True))
@@ -91,3 +94,63 @@ async def get(hub, unit, path):
         raise takara.exc.PathMissingError('The named path "{path}" is not present in unit "{unit}"')
     with open(fn_path, 'rb') as rfh:
         return rfh.read()
+
+
+async def rm(hub, unit, path):
+    '''
+    Remove the given path from the system
+    '''
+    if unit not in hub.takara.UNITS:
+        raise takara.exc.UnitMissingError('The named unit "{unit}" is not available')
+    unit_config = hub.takara.UNITS[unit]
+    unit_root = unit_config['unit_root']
+    fn_path = os.path.join(unit_root, path.replace('/', os.sep))
+    if os.path.isfile(fn_path):
+        os.remove(fn_path)
+    elif os.path.isdir(fn_path):
+        shutil.rmtree(fn_path)
+
+
+async def list_(hub, unit, path='/'):
+    '''
+    List all of the values in a given path location
+    '''
+    ret = []
+    if unit not in hub.takara.UNITS:
+        raise takara.exc.UnitMissingError('The named unit "{unit}" is not available')
+    unit_config = hub.takara.UNITS[unit]
+    unit_root = unit_config['unit_root']
+    fn_path = os.path.join(unit_root, path.replace('/', os.sep))
+    for root, dirs, files in os.walk(fn_path):
+        rel_root = os.relpath(root, fn_path)
+        for fn in files:
+            ret.append(os.path.join(rel_root, fn))
+    return ret
+
+
+# NOT DONE
+async def rename_unit(hub, unit, new_unit, store):
+    '''
+    Take the given unit and rename it
+    '''
+    if unit not in hub.takara.UNITS:
+        raise takara.exc.UnitMissingError('The named unit "{unit}" is not available')
+    if new_unit in hub.takara.UNITS:
+        raise takara.exc.UnitExistsError(f'Unit "{new_unit}" exists, please define another name')
+    unit_config = hub.takara.UNITS.pop(unit)
+    unit_root = unit_config['unit_root']
+    unit_dir = os.path.basename(unit_root)
+    unit_tgt = os.path.join(unit_dir, new_unit)
+    unit_file = unit_config['unit_file']
+    unit_data_dir = os.path.dirname(unit_file)
+    data_dir = os.path.dirname(os.path.dirname(unit_file))
+    new_data_dir = os.path.join(data_dir, new_unit)
+    new_unit_file = os.path.join(new_data_dir, UNIT_FN)
+    if not os.path.isdir(new_data_dir):
+        os.makedirs(new_data_dir)
+    unit_config['unit_root'] = unit_tgt
+    with open(new_unit_file, 'wb+') as wfh:
+        wfh.write(msgpack.dumps(unit_config, use_bin_type=True))
+    await hub.takara.store.file.config(data_dir=data_dir)
+    shutil.move(unit_root, unit_tgt)
+    shutil.rmtree(unit_data_dir)
