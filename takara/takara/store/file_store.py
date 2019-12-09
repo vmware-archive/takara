@@ -128,8 +128,7 @@ async def list_(hub, unit, path='/'):
     return ret
 
 
-# NOT DONE
-async def rename_unit(hub, unit, new_unit, store):
+async def rename_unit(hub, unit, new_unit):
     '''
     Take the given unit and rename it
     '''
@@ -138,8 +137,10 @@ async def rename_unit(hub, unit, new_unit, store):
     if new_unit in hub.takara.UNITS:
         raise takara.exc.UnitExistsError(f'Unit "{new_unit}" exists, please define another name')
     unit_config = hub.takara.UNITS.pop(unit)
+    if 'crypter' in unit_config:
+        unit_config.pop('crypter')
     unit_root = unit_config['unit_root']
-    unit_dir = os.path.basename(unit_root)
+    unit_dir = os.path.dirname(unit_root)
     unit_tgt = os.path.join(unit_dir, new_unit)
     unit_file = unit_config['unit_file']
     unit_data_dir = os.path.dirname(unit_file)
@@ -149,8 +150,8 @@ async def rename_unit(hub, unit, new_unit, store):
     if not os.path.isdir(new_data_dir):
         os.makedirs(new_data_dir)
     unit_config['unit_root'] = unit_tgt
+    shutil.move(unit_root, unit_tgt)
     with open(new_unit_file, 'wb+') as wfh:
         wfh.write(msgpack.dumps(unit_config, use_bin_type=True))
     await hub.takara.store.file.config(data_dir=data_dir)
-    shutil.move(unit_root, unit_tgt)
     shutil.rmtree(unit_data_dir)
