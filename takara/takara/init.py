@@ -8,6 +8,7 @@ __func_alias__ = {'set_': 'set'}
 def __init__(hub):
     hub.pop.sub.load_subdirs(hub.takara)
     hub.takara.UNITS = {}
+    hub.takara.CRYPT = {}
 
 
 def cli(hub):

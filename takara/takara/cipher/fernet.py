@@ -30,7 +30,8 @@ async def setup(hub, unit, seal_raw):
         key = getattr(hub, f'takara.seal.{seal}.derive')(seal_raw)
     else:
         key = seal_raw
-    hub.takara.UNITS[unit]['crypter'] = cryptography.fernet.Fernet(key)
+    hub.takara.CRYPT[unit] = {}
+    hub.takara.CRYPT[unit]['crypter'] = cryptography.fernet.Fernet(key)
 
 
 async def encrypt(hub, unit, data):
@@ -38,8 +39,8 @@ async def encrypt(hub, unit, data):
     Using the key from the given unit encrypt the raw bytes found in data
     and return the encryption string
     '''
-    cipher = hub.takara.UNITS[unit]['crypter']
-    return cipher.encrypt(data)
+    crypter = hub.takara.CRYPT[unit]['crypter']
+    return crypter.encrypt(data)
 
 
 async def decrypt(hub, unit, data):
@@ -47,6 +48,6 @@ async def decrypt(hub, unit, data):
     Using the key from the given unit decrypt the raw bytes found in data
     and return the clear string
     '''
-    cipher = hub.takara.UNITS[unit]['crypter']
-    return cipher.decrypt(data)
+    crypter = hub.takara.CRYPT[unit]['crypter']
+    return crypter.decrypt(data)
 

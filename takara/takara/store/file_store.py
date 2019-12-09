@@ -128,6 +128,17 @@ async def list_(hub, unit, path='/'):
     return ret
 
 
+async def rm_unit(hub, unit):
+    '''
+    Remove the named unit from the system
+    '''
+    if unit not in hub.takara.UNITS:
+        raise takara.exc.UnitMissingError('The named unit "{unit}" is not available')
+    unit_config = hub.takara.UNITS.pop(unit)
+    shutil.rmtree(unit_config['unit_root'])
+    os.remove(unit_config['unit_file'])
+
+
 async def rename_unit(hub, unit, new_unit):
     '''
     Take the given unit and rename it
@@ -137,8 +148,6 @@ async def rename_unit(hub, unit, new_unit):
     if new_unit in hub.takara.UNITS:
         raise takara.exc.UnitExistsError(f'Unit "{new_unit}" exists, please define another name')
     unit_config = hub.takara.UNITS.pop(unit)
-    if 'crypter' in unit_config:
-        unit_config.pop('crypter')
     unit_root = unit_config['unit_root']
     unit_dir = os.path.dirname(unit_root)
     unit_tgt = os.path.join(unit_dir, new_unit)
