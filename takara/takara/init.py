@@ -66,7 +66,7 @@ async def unseal(hub, **kw):
     '''
     unit = kw['unit']
     unit_config = hub.takara.UNITS[unit]
-    if 'crypter' in unit_config:
+    if 'crypter' in hub.takara.CRYPT.get(unit, {}):
         # Already unsealed, carry on!
         return True
     seal = unit_config['seal']
