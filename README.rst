@@ -2,6 +2,18 @@
 Takara
 ======
 
+MOVED TO GITLAB
+===============
+
+POP projects developed by Saltstack are being moved to Gitlab.
+
+The new location of idem is here:
+
+https://gitlab.com/saltstack/pop/takara
+
+Intro
+=====
+
 Takara is a secure secrets store. Takara differs from other secret stores in
 that it supports progressive usage. Secret stores need to be easy to use and
 easy to start with, but able to scale from easy local security all the way up
